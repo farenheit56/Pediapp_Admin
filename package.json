@@ -2,7 +2,7 @@
   "name": "admin",
   "version": "0.0.1",
   "description": "admin",
-  "productName": "admin",
+  "productName": "Panel de Administración",
   "author": "jfqdev <jfqdev@gmail.com>",
   "private": true,
   "scripts": {

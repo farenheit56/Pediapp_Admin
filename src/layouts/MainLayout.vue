@@ -50,7 +50,7 @@ const linksData = [
   {
     title: 'Productos',
     icon: 'production_quantity_limits',
-    link: 'https://quasar.dev'
+    link: '/products'
   },
   {
     title: 'Secciones',

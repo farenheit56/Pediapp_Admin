@@ -1,5 +1,5 @@
 <template>
-  <q-card class="table-bg">
+  <q-card class="table-bg no-shadow">
     <q-card-section>
       <div class="text-h6">
         Subcategorías
@@ -8,14 +8,7 @@
     </q-card-section>
     <q-separator color="white"/>
     <q-card-section class="q-pa-none">
-      <q-table class="table-bg" :data="categories" :columns="columns">
-        <template v-slot:body-cell-Name="props">
-          <q-td :props="props">
-            <q-item style="max-width: 420px">
-                <q-item-label>{{ props.row.name }}</q-item-label>
-            </q-item>
-          </q-td>
-        </template>
+      <q-table class="table-bg" :data="subcategories" :columns="columns">
         <template v-slot:body-cell-Action="props">
           <q-td :props="props">
             <q-btn icon="edit" size="sm" flat dense/>
@@ -34,7 +27,7 @@ export default {
   name: "SubcategoriesTable",
   data() {
     return {
-      categories: [],
+      subcategories: [],
       columns: [
         {name: 'Id', label: 'ID', field: 'id', sortable: true, align: 'left'},
         {name: 'Name', label: 'Nombre', field: 'name', sortable: true, align: 'left'},
@@ -43,13 +36,13 @@ export default {
     }
   },
   created(){
-    this.listarSubategorias();
+    this.getSubcategories();
   },
   methods: {
-    listarSubategorias(){
+    getSubcategories(){
       api.get('subcategories')
       .then((response) => {
-        this.categories = response.data
+        this.subcategories = response.data
       })
       .catch((e)=>{
         console.log('error' + e);

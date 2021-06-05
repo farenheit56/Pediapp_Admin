@@ -1,5 +1,5 @@
 <template>
-  <q-card class="table-bg">
+  <q-card class="table-bg no-shadow">
     <q-card-section>
       <div class="text-h6">
         Categorías
@@ -9,15 +9,6 @@
     <q-separator color="white"/>
     <q-card-section class="q-pa-none">
       <q-table class="table-bg" :data="categories" :columns="columns">
-        <template v-slot:body-cell-Name="props">
-          <q-td :props="props">
-            <q-item style="max-width: 420px">
-              <q-item-section>
-                <q-item-label>{{ props.row.name }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-td>
-        </template>
         <template v-slot:body-cell-Action="props">
           <q-td :props="props">
             <q-btn icon="edit" size="sm" flat dense/>
@@ -45,10 +36,10 @@ export default {
     }
   },
   created(){
-    this.listarCategorias();
+    this.getCategories();
   },
   methods: {
-    listarCategorias(){
+    getCategories(){
       api.get('categories')
       .then((response) => {
         this.categories = response.data

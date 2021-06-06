@@ -50,7 +50,7 @@
               <q-file 
               rounded outlined type="file" 
               bottom-slots
-              v-model="editedItem.image_url"
+              v-model="editedItem.file"
               label="Foto"
               counter
               max-file-size="2097152"
@@ -112,13 +112,15 @@ export default {
         name: '',
         price: '',
         description: '', 
-        image_url: null,       
+        file: null,
+        image_url: '',       
       },
       defaultItem: {
         name: '',
         price: '',
         description: '', 
-        image_url: null,     
+        file: null,
+        image_url: '',     
       },
     }
   },
@@ -146,7 +148,7 @@ export default {
       const index = this.products.indexOf(item)
       const id = this.products[index].id
       confirm('Estás seguro que querés eliminar este producto?') && this.products.splice(index, 1) &&
-      this.axios.delete(`products/deleteProduct/${id}`)
+      api.delete(`products/deleteProduct/${id}`)
       .catch( e => {
         console.log(e.response)
       })
@@ -160,17 +162,23 @@ export default {
     },
 
     save () {
+      let formData = new FormData();
+      formData.set('name',this.editedItem.name)
+      formData.set('price',this.editedItem.price)
+      formData.set('description',this.editedItem.description)
+      formData.append('file',this.editedItem.file)
+
       if (this.editedIndex > -1) {
         Object.assign(this.products[this.editedIndex], this.editedItem)
-        this.axios.put(`products/editProduct/${this.products[this.editedIndex]._id}`, this.editedItem)
+        api.put(`products/editProduct/${this.products[this.editedIndex].id}`, formData)
         .catch(e => {
           console.log(e);
         })
       } else {
         this.products.push(this.editedItem)
-        this.axios.post('products/addProduct', this.editedItem)
+        api.post('products/addProduct', formData)
         .catch( e => {
-          console.log(e.response.data.error.errors.nombre.message)
+          console.log(e.response.data.errors.message)
         })
       }
       this.close()

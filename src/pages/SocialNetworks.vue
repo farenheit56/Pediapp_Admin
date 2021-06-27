@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-sm">
     <div class="row justify-evenly">
-      <products-table class="q-ma-sm"></products-table>
+      <social-network-table class="q-ma-sm"></social-network-table>
     </div>
   </q-page>
 </template>
@@ -9,9 +9,9 @@
 <script>
 
 export default {
-  name: "Products",
+  name: "SocialNetworks",
   components: {
-    ProductsTable: () => import('components/products/ProductsTable'),
+    SocialNetworkTable: () => import('components/socialNetworks/SocialNetworksTable'),
   },
 }
 </script>

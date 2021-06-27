@@ -55,22 +55,17 @@ const linksData = [
   {
     title: 'Secciones',
     icon: 'view_quilt',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Footer',
-    icon: 'low_priority',
-    link: 'https://quasar.dev'
+    link: '/internalSections'
   },
   {
     title: 'Redes Sociales',
     icon: 'share',
-    link: 'https://quasar.dev'
+    link: '/socialNetworks'
   },
   {
     title: 'Datos de Contacto',
     icon: 'contact_page',
-    link: 'https://quasar.dev'
+    link: '/contact'
   },
 ];
 

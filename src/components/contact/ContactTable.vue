@@ -13,7 +13,7 @@
         </template>
         <template v-slot:body-cell-Action="props">
           <q-td :props="props">
-            <q-btn icon="edit" size="sm" flat dense @click="editContact(props.row)"/>
+            <q-btn icon="edit" size="sm" class="text-amber-9" flat dense @click="editContact(props.row)"/>
           </q-td>
         </template>
       </q-table>

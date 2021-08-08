@@ -1,8 +1,11 @@
 <template>
   <q-page class="q-pa-sm">
     <div class="row justify-evenly">
-      <categories-table class="q-ma-sm"></categories-table>
-      <subcategories-table class="q-ma-sm"></subcategories-table>
+      <categories-expansion-item class="q-ma-sm"></categories-expansion-item>
+      
+    </div>
+    <div>
+      
     </div>
   </q-page>
 </template>
@@ -12,8 +15,7 @@
 export default {
   name: "Categories",
   components: {
-    CategoriesTable: () => import('components/categories/CategoriesTable'),
-    SubcategoriesTable: () => import('components/categories/SubcategoriesTable'),
+    CategoriesExpansionItem: () => import('components/categories/CategoriesExpansionItem')
   },
 }
 </script>

@@ -9,21 +9,38 @@
         class="table-bg"
         :data="products"
         :columns="columns"
+        :visible-columns="visibleColumns"
         :filter="filter"
         :pagination="pagination"
       >
         <template v-slot:top-left>
-          <q-input
-            borderless
-            dense
-            debounce="300"
-            v-model="filter"
-            placeholder="Buscar"
-          >
+          <div class="row">
+            <div class="col-6">
+              <q-input
+                borderless
+                dense
+                debounce="300"
+                v-model="filter"
+                placeholder="Buscar"
+              >
             <template v-slot:append>
               <q-icon name="search" />
             </template>
           </q-input>
+            </div>
+            <div class="col-6">
+              <q-select
+                borderless
+                dense
+                debounce="300"
+                v-model="subcategoryFilter"
+                :options="subcategories"
+                label="Subcategorías"
+                @input="updateProductList()"
+              />
+            </div>
+          </div>
+          
         </template>
         <template v-slot:top-right>
           <q-btn
@@ -36,8 +53,26 @@
         <template v-slot:body-cell-Action="props">
           <q-td :props="props">
             <q-btn
+              v-if="props.row.index != 1"
+              icon="arrow_upward"
+              size="sm"
+              class="q-ml-sm text-green-9"
+              flat
+              dense
+              @click="orderUp(props.row)"
+            />
+            <q-btn
+              icon="arrow_downward"
+              size="sm"
+              class="q-ml-sm text-red-9"
+              flat
+              dense
+              @click="orderDown(props.row)"
+            />
+            <q-btn
               icon="share"
               size="sm"
+              class="q-ml-sm text-green-9"
               flat
               dense
               @click="relateProduct(props.row)"
@@ -45,7 +80,7 @@
             <q-btn
               icon="edit"
               size="sm"
-              class="q-ml-sm"
+              class="q-ml-sm text-yellow-9"
               flat
               dense
               @click="editProduct(props.row)"
@@ -53,7 +88,7 @@
             <q-btn
               icon="delete"
               size="sm"
-              class="q-ml-sm"
+              class="q-ml-sm text-red-9"
               flat
               dense
               @click="deleteProduct(props.row)"
@@ -73,7 +108,7 @@
         </template>
       </q-table>
     </q-card-section>
-    <q-dialog v-model="addProductDialog">
+    <q-dialog v-model="addProductDialog" persistent>
       <q-card style="min-width: 750px">
         <q-card-section>
           <div class="text-h6">{{ formTitle }}</div>
@@ -136,13 +171,13 @@
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="Cancelar" @click="close" />
-          <q-btn flat :label="formTitle" @click="save" />
+          <q-btn flat label="Cancelar" @click="closeNewProductDialog" />
+          <q-btn flat :label="formTitle" @click="saveNewProduct" />
         </q-card-actions>
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="relateProductDialog">
+    <q-dialog v-model="relateProductDialog" persistent>
       <q-card style="min-width: 750px">
         <q-card-section>
           <div class="text-h6">Relacionar con Subcategoría</div>
@@ -161,8 +196,8 @@
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="Cancelar" @click="close" />
-          <q-btn flat label="Relacionar Subcategorias" @click="save" />
+          <q-btn flat label="Cancelar" @click="closeRelationDialog" />
+          <q-btn flat label="Relacionar Subcategorias" @click="saveNewSubcategoryRelation" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -183,7 +218,8 @@ export default {
       products: [],
       subcategories: [],
       selectedSubcategories: [],
-      filter: "",
+      filter: '',
+      subcategoryFilter: [],
       columns: [
         { name: "Id", label: "ID", field: "id", sortable: true, align: "left" },
         {
@@ -221,7 +257,14 @@ export default {
           sortable: true,
           align: "center",
         },
+        {
+          name: "Subcategories",
+          label: "Subcategorias",
+          field: "subcategories",
+          align: "center",
+        },
       ],
+      visibleColumns: [ 'Name', "Price", "Description", "Image", "Action"],
       pagination: {
         rowsPerPage: 5,
       },
@@ -293,16 +336,26 @@ export default {
     },
     relateProduct(item) {
       this.relateProductDialog = true;
+
+      this.editedIndex = this.products.indexOf(item);
+      this.products[this.editedIndex].subcategories.forEach(subcategory => {
+        this.selectedSubcategories.push(subcategory.id)
+      });
     },
-    close() {
+    closeNewProductDialog() {
       this.addProductDialog = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
     },
-
-    save() {
+    closeRelationDialog() {
+      this.relateProductDialog = false;
+      this.$nextTick(() => {
+        this.selectedSubcategories = [];
+      });
+    },
+    saveNewProduct() {
       let formData = new FormData();
       formData.set("name", this.editedItem.name);
       formData.set("price", this.editedItem.price);
@@ -343,7 +396,34 @@ export default {
             console.log(e.response.data.errors.message);
           });
       }
-      this.close();
+      this.closeNewProductDialog();
+    },
+    saveNewSubcategoryRelation() {
+      let localIndex = this.editedIndex
+
+      this.selectedSubcategories.forEach(subcategory => {
+        //Aca chequeo si la subcategoria seleccionada ya estaba asignada al traer los productos (Solo peticiono lo nuevo)
+        let found = this.products[localIndex].subcategories.some(el => {return el.id == subcategory})
+        if(!found) {
+          //Hago la petición
+          api.post('products/relateProductToSubcategory', {productId: this.products[localIndex].id, subcategoryId: subcategory })
+          .then(() => {
+
+          })
+        }
+      })
+      this.getProducts()
+      console.log(this.products)
+    },
+    updateProductList() {
+      api
+        .get(`products/${this.subcategoryFilter.value}`)
+        .then((response) => {
+          this.products = response.data;
+        })
+        .catch((e) => {
+          console.log("error" + e);
+        });
     },
     onRejected() {
       this.$q.notify({

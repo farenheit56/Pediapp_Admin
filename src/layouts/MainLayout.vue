@@ -14,6 +14,14 @@
         <q-toolbar-title>
           Panel de Administración
         </q-toolbar-title>
+
+        <q-btn
+          flat
+          dense
+          round
+          label="Cerrar Sesión"
+          @click="cerrarSesion()" v-if="estaActivo"
+        />
       </q-toolbar>
     </q-header>
 
@@ -40,6 +48,7 @@
 
 <script>
 import DrawerOptions from 'components/DrawerOptions.vue'
+import { mapActions, mapGetters } from "vuex";
 
 const linksData = [
   {
@@ -77,6 +86,12 @@ export default {
       leftDrawerOpen: false,
       DrawerOptions: linksData
     }
-  }
+  },
+  computed:{
+  ...mapGetters(['estaActivo'])
+  },
+  methods:{
+  ...mapActions(['cerrarSesion', 'leerToken'])
+  },
 }
 </script>

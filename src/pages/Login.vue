@@ -21,7 +21,7 @@
             >
               <q-input
                 filled
-                v-model="username"
+                v-model="user.username"
                 label="Usuario"
                 lazy-rules
               />
@@ -29,17 +29,20 @@
               <q-input
                 type="password"
                 filled
-                v-model="password"
+                v-model="user.pass"
                 label="Contraseña"
                 lazy-rules
 
               />
 
               <div>
-                <q-btn label="Ingresar" to="/" type="button" color="primary"/>
+                <q-btn label="Ingresar" @click="login" type="button" color="primary"/>
               </div>
             </q-form>
           </q-card-section>
+          <div class="q-ml-md" v-if="mensaje !== ''">
+            <p>{{mensaje}}</p>
+          </div>
         </q-card>
       </q-page>
     </q-page-container>
@@ -47,12 +50,31 @@
 </template>
 
 <script>
+import { mapState, mapMutations, mapActions } from "vuex";
+import { api } from '../boot/axios'
+
     export default {
         data() {
             return {
-                username: '',
-                password: ''
+                user: {username: "", pass: ""},
+                mensaje: ''
             }
+        },
+        methods: {
+          ...mapMutations(['obtenerUsuario']),
+          ...mapActions(['guardarUsuario', 'leerToken', 'cerrarSesion']),
+          login() {
+            api.post('users/login', this.user)
+            .then((response) => {
+              const token = response.data.token
+              this.guardarUsuario(token)
+              this.$router.push({ path: '/' })
+            })
+            .catch((e)=>{
+              console.log('error' + e);
+              this.mensaje = e.response.data.mensaje;
+            })
+          },
         },
     }
 </script>

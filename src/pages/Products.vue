@@ -1,8 +1,6 @@
 <template>
   <q-page class="q-pa-sm">
-    <div class="row justify-evenly">
       <products-table class="q-ma-sm"></products-table>
-    </div>
   </q-page>
 </template>
 

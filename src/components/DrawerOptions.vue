@@ -3,7 +3,7 @@
     clickable
     tag="a"
     target="_self"
-    :href="link"
+    @click="changeSection(link)"
   >
     <q-item-section
       v-if="icon"
@@ -35,6 +35,11 @@ export default {
     icon: {
       type: String,
       default: ''
+    }
+  },
+  methods: {
+    changeSection(link) {
+      this.$router.push({ path: `${link}` })
     }
   }
 }

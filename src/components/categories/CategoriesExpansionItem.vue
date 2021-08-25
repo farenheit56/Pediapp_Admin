@@ -1,4 +1,5 @@
 <template>
+<div>
   <q-card>
     <q-card-section>
       <div class="text-h6">
@@ -63,6 +64,18 @@
             <q-item-section >
               {{category.name}}
             </q-item-section>
+
+            <q-item-section
+             v-if="index != 0"
+             side>
+              <q-icon color="primary" size="xs" class="pointer" name="arrow_upward" @click="orderUp(index)"/>
+            </q-item-section>
+
+            <q-item-section 
+            v-if="index < categories.length-1"
+            side>
+              <q-icon color="primary" size="xs" class="pointer" name="arrow_downward" @click="orderDown(index)"/>
+            </q-item-section>
             
              <q-item-section side>
               <q-icon name="edit" color="primary" size="xs" class="pointer" @click="editCategory(category)" />
@@ -76,6 +89,7 @@
         </q-expansion-item>
       </q-list>
     </div>
+
     <q-dialog v-model="addCategoryDialog" persistent>
       <q-card style="min-width: 750px">
         <q-card-section>
@@ -118,16 +132,41 @@
       </q-card>
     </q-dialog>
   </q-card>
+      <div
+      class="q-ma-md">
+        <q-btn
+          v-if="orderModified"
+          color="positive"
+          class="text-capitalize"
+          @click="getCategories(); orderModified = false"
+        >
+        Restaurar
+        </q-btn>
+    </div>
+      <div
+      class="q-ma-md">
+        <q-btn
+          v-if="orderModified"
+          color="positive"
+          class="text-capitalize"
+          @click="orderCategories()"
+        >
+        Confirmar orden
+        </q-btn>
+    </div>
+</div>
 </template>
 
 <script>
 import { api } from "../../boot/axios";
+import {arrayMoveImmutable} from 'array-move';
 
 export default {
   name: "CategoriesExpansionItem",
   data() {
     return {
       categories: [],
+      orderModified: false,
       addCategoryDialog: false,
       addSubcategoryDialog: false,
       editedIndex: -1,
@@ -186,7 +225,16 @@ export default {
 
       confirm("Estás seguro que querés eliminar esta subcategoría?") &&
         api.delete(`subcategories/deleteSubcategory/${item.id}`)
-        .then(this.getCategories())
+        .then(() => {
+            api
+            .get("categories")
+            .then((response) => {
+              this.categories = response.data;
+            })
+            .catch((e) => {
+              console.log("error" + e);
+            });
+          })
         .catch((e) => {
           console.log(e.response.data.message);
         });
@@ -226,14 +274,32 @@ export default {
       if (this.editedIndex > -1) {
         api
           .put(`subcategories/editSubcategory/${this.editedIndex}`, this.editedItem)
-          .then(this.getCategories())
+          .then(() => {
+            api
+            .get("categories")
+            .then((response) => {
+              this.categories = response.data;
+            })
+            .catch((e) => {
+              console.log("error" + e);
+            });
+          })
           .catch((e) => {
             console.log(e);
           });
       } else {
         api
           .post("subcategories/addSubcategory", this.editedItem)
-          .then(this.getCategories())
+          .then(() => {
+            api
+            .get("categories")
+            .then((response) => {
+              this.categories = response.data;
+            })
+            .catch((e) => {
+              console.log("error" + e);
+            });
+          })
           .catch((e) => {
             console.log(e.response.data.message);
           });
@@ -254,6 +320,25 @@ export default {
         this.editedIndex = -1;
       });
     },
+    orderUp(category_index) {
+      this.categories = arrayMoveImmutable(this.categories, category_index, category_index - 1)
+      if (!this.orderModified) {
+        this.orderModified = true
+      }
+    },
+    orderDown(category_index) {
+      this.categories = arrayMoveImmutable(this.categories, category_index, category_index + 1)
+      if (!this.orderModified) {
+        this.orderModified = true
+      }
+    },
+    orderCategories() {
+      api
+        .put(`categories/orderCategories`, this.categories)
+        .then(() => {
+          this.orderModified = false
+        })
+    }
   },
 };
 </script>

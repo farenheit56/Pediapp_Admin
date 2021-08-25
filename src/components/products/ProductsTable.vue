@@ -1,4 +1,59 @@
 <template>
+<div class="row">
+  <div class="col-3">
+  <q-card class="table-bg no-shadow">
+    <q-card-section>
+      <div class="text-h6">Filtro por Categorías</div>
+    </q-card-section>
+    <q-card-section>
+        <q-expansion-item
+          popup 
+          group="categoryFilter"
+          expand-separator
+          expand-icon-toggle
+          v-for="(category, index) in categories"
+          :key="category.id"
+        >
+          <q-item
+            :label="subcategory.name"
+            style="border-radius: 30px;"
+            v-for="subcategory in categories[index].subcategories"
+            :key="subcategory.id"
+            :class="{selected: subcategory.selected}"
+          >
+
+            <q-item-section class="pointer q-ml-lg" @click="updateProductListWithSubcategory(subcategory); subcategory.selected = true">
+              {{ subcategory.name }}
+            </q-item-section>
+
+          </q-item>
+
+          <template v-slot:header>
+
+            <q-item-section :class="{selected: category.selected, pointer: true}" @click="updateProductListWithCategory(category); category.selected = true">
+              {{category.name}}
+            </q-item-section>
+
+          </template>
+        </q-expansion-item>
+
+        <div
+      class="q-ma-md">
+        <q-btn
+          v-if="activeCategoryFilter"
+          color="positive"
+          class="text-capitalize"
+          @click="resetCategoryFilter()"
+        >
+        Restaurar
+        </q-btn>
+    </div>
+        
+    </q-card-section>
+  </q-card>
+  </div>
+
+  <div class="col-9">
   <q-card class="table-bg no-shadow">
     <q-card-section>
       <div class="text-h6">Productos</div>
@@ -14,8 +69,6 @@
         :pagination="pagination"
       >
         <template v-slot:top-left>
-          <div class="row">
-            <div class="col-6">
               <q-input
                 borderless
                 dense
@@ -27,19 +80,6 @@
               <q-icon name="search" />
             </template>
           </q-input>
-            </div>
-            <div class="col-6">
-              <q-select
-                borderless
-                dense
-                debounce="300"
-                v-model="subcategoryFilter"
-                :options="subcategories"
-                label="Subcategorías"
-                @input="updateProductList()"
-              />
-            </div>
-          </div>
           
         </template>
         <template v-slot:top-right>
@@ -51,28 +91,11 @@
           />
         </template>
         <template v-slot:body-cell-Action="props">
-          <q-td :props="props">
-            <q-btn
-              v-if="props.row.index != 1"
-              icon="arrow_upward"
-              size="sm"
-              class="q-ml-sm text-green-9"
-              flat
-              dense
-              @click="orderUp(props.row)"
-            />
-            <q-btn
-              icon="arrow_downward"
-              size="sm"
-              class="q-ml-sm text-red-9"
-              flat
-              dense
-              @click="orderDown(props.row)"
-            />
+          <q-td :props="props" >
             <q-btn
               icon="share"
               size="sm"
-              class="q-ml-sm text-green-9"
+              class="q-ml-sm"
               flat
               dense
               @click="relateProduct(props.row)"
@@ -80,7 +103,7 @@
             <q-btn
               icon="edit"
               size="sm"
-              class="q-ml-sm text-yellow-9"
+              class="q-ml-sm"
               flat
               dense
               @click="editProduct(props.row)"
@@ -88,7 +111,7 @@
             <q-btn
               icon="delete"
               size="sm"
-              class="q-ml-sm text-red-9"
+              class="q-ml-sm"
               flat
               dense
               @click="deleteProduct(props.row)"
@@ -179,11 +202,71 @@
 
     <q-dialog v-model="relateProductDialog" persistent>
       <q-card style="min-width: 750px">
+
         <q-card-section>
-          <div class="text-h6">Relacionar con Subcategoría</div>
+          <div class="text">Seleccionar Categoria/s o Subcategoría/s a relacionar</div>
         </q-card-section>
 
-        <q-card-section class="q-pt-none">
+        <q-card-section class="scroll">
+        <q-expansion-item
+          popup 
+          group="categoryRelations"
+          expand-separator
+          expand-icon-toggle
+          v-for="(category, index) in categories"
+          :key="category.id"
+          
+        >
+          <q-item
+            :label="subcategory.name"
+            v-for="subcategory in categories[index].subcategories"
+            :key="subcategory.id"
+          >
+
+            <q-item-section class="pointer" @click="setSelectedSubcategories(category, subcategory)">
+              {{ subcategory.name }}
+            </q-item-section>
+
+          </q-item>
+
+          <template v-slot:header>
+
+            <q-item-section  class="pointer" @click="setSelectedCategories(category)">
+              {{category.name}}
+            </q-item-section>
+
+          </template>
+        </q-expansion-item>
+
+          <div>
+            <div class="text">Categorías seleccionadas</div>
+            <q-chip
+            removable
+            @remove="unsetSelectedCategories(selectedCategory, index)"
+            v-for="(selectedCategory, index) in selectedCategories"
+            :key="selectedCategory.id"
+            :label="selectedCategory.name"
+            icon="bookmark" color="blue" text-color="white"
+            >
+            </q-chip>
+          </div>
+
+          <div>
+            <div class="text">Subcategorías seleccionadas</div>
+            <q-chip
+            removable
+            @remove="selectedSubcategories.splice(index,1)"
+            v-for="(selectedSubcategory, index) in selectedSubcategories"
+            :key="selectedSubcategory.id"
+            :label="selectedSubcategory.name"
+            icon="bookmark" color="red" text-color="white"
+            >
+            
+            </q-chip>
+          </div>
+        </q-card-section>
+
+        <!-- <q-card-section class="q-pt-none">
           <div class="row justify-center">
             <q-option-group
             v-model="selectedSubcategories"
@@ -192,8 +275,7 @@
             type="checkbox"
           />
           </div>
-          
-        </q-card-section>
+        </q-card-section> -->
 
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancelar" @click="closeRelationDialog" />
@@ -202,6 +284,8 @@
       </q-card>
     </q-dialog>
   </q-card>
+  </div>
+</div>  
 </template>
 
 <script>
@@ -211,17 +295,28 @@ export default {
   name: "ProductsTable",
   created() {
     this.getProducts();
+    this.getCategories();
     this.getSubcategories();
   },
   data() {
     return {
       products: [],
+      categories: [],
       subcategories: [],
+      selectedCategories: [],
       selectedSubcategories: [],
       filter: '',
+      activeCategoryFilter: false,
       subcategoryFilter: [],
       columns: [
         { name: "Id", label: "ID", field: "id", sortable: true, align: "left" },
+        {
+          name: "Image",
+          label: "",
+          field: "image_url",
+          sortable: true,
+          align: "left",
+        },        
         {
           name: "Name",
           label: "Nombre",
@@ -244,15 +339,8 @@ export default {
           align: "left",
         },
         {
-          name: "Image",
-          label: "Imagen",
-          field: "image_url",
-          sortable: true,
-          align: "left",
-        },
-        {
           name: "Action",
-          label: "",
+          label: "Acciones",
           field: "Action",
           sortable: true,
           align: "center",
@@ -303,6 +391,16 @@ export default {
           console.log("error" + e);
         });
     },
+    getCategories() {
+      api
+        .get("categories")
+        .then((response) => {
+          this.categories = response.data
+        })
+        .catch((e) => {
+          console.log("error" + e);
+        });
+    },
     getSubcategories() {
       api
         .get("subcategories")
@@ -338,8 +436,11 @@ export default {
       this.relateProductDialog = true;
 
       this.editedIndex = this.products.indexOf(item);
+      this.products[this.editedIndex].categories.forEach(category => {
+        this.selectedCategories.push(category)
+      })
       this.products[this.editedIndex].subcategories.forEach(subcategory => {
-        this.selectedSubcategories.push(subcategory.id)
+        this.selectedSubcategories.push(subcategory)
       });
     },
     closeNewProductDialog() {
@@ -352,6 +453,7 @@ export default {
     closeRelationDialog() {
       this.relateProductDialog = false;
       this.$nextTick(() => {
+        this.selectedCategories = [];
         this.selectedSubcategories = [];
       });
     },
@@ -398,32 +500,120 @@ export default {
       }
       this.closeNewProductDialog();
     },
+    setSelectedCategories(category) {
+      if(this.selectedCategories.find(element => element.id == category.id) === undefined) {
+        this.selectedCategories.push(category)
+      }
+    },
+    setSelectedSubcategories(category, subcategory) {
+      if(this.selectedCategories.find(element => element.id == category.id) === undefined) {
+        this.selectedCategories.push(category)
+      }
+      if(this.selectedSubcategories.find(element => element.id == subcategory.id) === undefined) {
+      this.selectedSubcategories.push(subcategory)
+      }
+    },
+    unsetSelectedCategories(selectedCategory, selectedCategoryIndex) {
+      this.selectedCategories.splice(selectedCategoryIndex,1)
+      //Conocer las subcategorias de la categoria
+      let categoryChilds = this.categories.find(category => category.id == selectedCategory.id).subcategories
+      //Por cada una de las subcategorias, encontrarlas en las selectedSubcategories y eliminarlas
+      categoryChilds.forEach(categoryChild => {
+        let index = this.selectedSubcategories.indexOf(this.selectedSubcategories.find(selectedSubcategory => selectedSubcategory.id == categoryChild.id))
+        if (index >= 0){
+          this.selectedSubcategories.splice(index, 1)
+          }
+      })
+    },
     saveNewSubcategoryRelation() {
       let localIndex = this.editedIndex
-
-      this.selectedSubcategories.forEach(subcategory => {
-        //Aca chequeo si la subcategoria seleccionada ya estaba asignada al traer los productos (Solo peticiono lo nuevo)
-        let found = this.products[localIndex].subcategories.some(el => {return el.id == subcategory})
-        if(!found) {
-          //Hago la petición
-          api.post('products/relateProductToSubcategory', {productId: this.products[localIndex].id, subcategoryId: subcategory })
-          .then(() => {
-
-          })
+      // Primero, elimino todas las que estaban relacionadas, pero ahora no lo estan. Primero categorias, despues subcategorias
+      this.products[localIndex].categories.forEach(category => {
+        let deleted = this.selectedCategories.some(el => {return el.id == category.id})
+        if(!deleted) {
+          api.post('products/separateProductFromCategory', {productId: this.products[localIndex].id, categoryId: category.id })
         }
       })
-      this.getProducts()
-      console.log(this.products)
-    },
-    updateProductList() {
+      this.products[localIndex].subcategories.forEach(subcategory => {
+        let deleted = this.selectedSubcategories.some(el => {return el.id == subcategory.id})
+        if(!deleted) {
+          api.post('products/separateProductFromSubcategory', {productId: this.products[localIndex].id, subcategoryId: subcategory.id })
+        }
+      })
+      //Despues, asocio 
+      this.selectedSubcategories.forEach(subcategory => {
+        let found = this.products[localIndex].subcategories.some(el => {return el.id == subcategory.id})
+        if(!found) {
+          api.post('products/relateProductToSubcategory', {productId: this.products[localIndex].id, subcategoryId: subcategory.id })
+        }
+      })
+      this.selectedCategories.forEach(category => {
+        let found = this.products[localIndex].categories.some(el => {return el.id == category.id})
+        if(!found) {
+          api.post('products/relateProductToCategory', {productId: this.products[localIndex].id, categoryId: category.id })
+        }
+      })
+      //Finalmente, vuelvo a pedir los productos (Verificar que todo funcione en orden y traiga los productos actualizadisimos)
       api
-        .get(`products/${this.subcategoryFilter.value}`)
+      .get("products")
+      .then((response) => {
+        this.products = response.data;
+        this.closeRelationDialog()
+      })
+      .catch((e) => {
+        console.log("error" + e);
+      });
+    },
+    updateProductListWithCategory(category) {
+      this.categories.forEach(category => {
+        category.selected = false
+        category.subcategories.forEach(subcategory => {
+          subcategory.selected = false
+        })
+      })
+      this.activeCategoryFilter = true
+      api
+        .get(`products/findForCategory/${category.id}`)
         .then((response) => {
           this.products = response.data;
         })
         .catch((e) => {
           console.log("error" + e);
         });
+    },
+    updateProductListWithSubcategory(subcategory) {
+      this.categories.forEach(category => {
+        category.selected = false
+        category.subcategories.forEach(subcategory => {
+          subcategory.selected = false
+        })
+      })
+      this.activeCategoryFilter = true
+      api
+        .get(`products/findForSubcategory/${subcategory.id}`)
+        .then((response) => {
+          this.products = response.data;
+        })
+        .catch((e) => {
+          console.log("error" + e);
+        });
+    },
+    resetCategoryFilter() {
+      api
+      .get("products")
+      .then((response) => {
+        this.products = response.data
+        this.activeCategoryFilter = false
+        this.categories.forEach(category => {
+        category.selected = false
+        category.subcategories.forEach(subcategory => {
+          subcategory.selected = false
+        })
+      })
+      })
+      .catch((e) => {
+        console.log("error" + e);
+      });
     },
     onRejected() {
       this.$q.notify({
@@ -436,5 +626,13 @@ export default {
 </script>
 
 <style>
+.pointer {
+  cursor: pointer;
+}
 
+.selected {
+  font-weight: 700;
+  text-decoration-line: underline;
+  text-decoration-color: cadetblue;
+}
 </style>

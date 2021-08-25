@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+// Importamos la tienda
+import store from './../store/index.js';
 
 import routes from './routes'
 
@@ -24,6 +26,18 @@ export default function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     mode: process.env.VUE_ROUTER_MODE,
     base: process.env.VUE_ROUTER_BASE
+  })
+
+  Router.beforeEach((to, from, next) => {
+    const rutaProtegida = to.matched.some(record => record.meta.requireAuth);
+  
+    if(rutaProtegida && store.state.token === ''){
+      next({name: 'login'})
+  
+    }else{
+      next()
+    }
+  
   })
 
   return Router

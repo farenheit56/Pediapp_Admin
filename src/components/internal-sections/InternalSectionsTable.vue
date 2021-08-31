@@ -34,6 +34,11 @@
             <q-img v-if="props.row.slider_url" :src="`http://localhost:3000/images/` + props.row.support_image_url" height="auto" width="100px" :ratio="1"/>
           </q-td>
         </template>
+        <template v-slot:body-cell-Description="props">
+          <q-td :props="props">
+            {{props.row.description.substr(0, 25) + '&hellip;'}}
+          </q-td>
+        </template>
       </q-table>
     </q-card-section>
     <q-dialog v-model="sectionsDialog">

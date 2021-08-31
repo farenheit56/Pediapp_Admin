@@ -118,6 +118,11 @@
             />
           </q-td>
         </template>
+        <template v-slot:body-cell-Description="props">
+          <q-td :props="props">
+            {{props.row.description.substr(0, 10) + '&hellip;'}}
+          </q-td>
+        </template>
         <template v-slot:body-cell-Image="props">
           <q-td :props="props">
             <q-img
@@ -126,6 +131,22 @@
               height="auto"
               width="100px"
               :ratio="1"
+            />
+          </q-td>
+        </template>
+        <template v-slot:body-cell-Active="props">
+          <q-td :props="props">
+            <q-checkbox
+              disable
+              v-model="props.row.active"
+            />
+          </q-td>
+        </template>
+        <template v-slot:body-cell-Stock="props">
+          <q-td :props="props">
+            <q-checkbox
+              disable
+              v-model="props.row.stock"
             />
           </q-td>
         </template>
@@ -157,6 +178,23 @@
                 type="textarea"
               />
             </div>
+          </div>
+          <div class="row q-mt-md justify-center">
+            <div class="col-6 q-mx-sm">
+              <q-checkbox
+              v-model="editedItem.active"
+              label="Activo?"
+              left-label           
+              />              
+            </div>
+            <div class="col-6 q-mx-sm">
+              <q-checkbox
+              v-model="editedItem.stock"
+              label="Tiene Stock?"
+              left-label           
+              />              
+            </div>
+
           </div>
           <div class="row q-mt-md justify-center">
             <div class="col-6 q-mx-sm">
@@ -266,17 +304,6 @@
           </div>
         </q-card-section>
 
-        <!-- <q-card-section class="q-pt-none">
-          <div class="row justify-center">
-            <q-option-group
-            v-model="selectedSubcategories"
-            :options="subcategories"
-            color="primary"
-            type="checkbox"
-          />
-          </div>
-        </q-card-section> -->
-
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancelar" @click="closeRelationDialog" />
           <q-btn flat label="Relacionar Subcategorias" @click="saveNewSubcategoryRelation" />
@@ -339,6 +366,20 @@ export default {
           align: "left",
         },
         {
+          name: "Active",
+          label: "Activo",
+          field: "active",
+          sortable: true,
+          align: "center",
+        },
+        {
+          name: "Stock",
+          label: "Stock",
+          field: "stock",
+          sortable: true,
+          align: "center",
+        },
+        {
           name: "Action",
           label: "Acciones",
           field: "Action",
@@ -352,7 +393,7 @@ export default {
           align: "center",
         },
       ],
-      visibleColumns: [ 'Name', "Price", "Description", "Image", "Action"],
+      visibleColumns: [ "Id", 'Name', "Price", "Description", "Active", "Stock", "Image", "Action"],
       pagination: {
         rowsPerPage: 5,
       },
@@ -365,6 +406,8 @@ export default {
         description: "",
         file: null,
         image_url: "",
+        active: null,
+        stock: null,
       },
       defaultItem: {
         name: "",
@@ -372,6 +415,8 @@ export default {
         description: "",
         file: null,
         image_url: "",
+        active: null,
+        stock: null,
       },
     };
   },
@@ -462,6 +507,8 @@ export default {
       formData.set("name", this.editedItem.name);
       formData.set("price", this.editedItem.price);
       formData.set("description", this.editedItem.description);
+      formData.set("active", this.editedItem.active)
+      formData.set("stock", this.editedItem.stock)
       formData.append("file", this.editedItem.file);
 
       if (this.editedIndex > -1) {
@@ -476,6 +523,8 @@ export default {
               description: data.data.description,
               file: null,
               image_url: data.data.image_url,
+              active: data.data.active,
+              stock: data.data.stock,
             });
           })
           .catch((e) => {
@@ -492,6 +541,8 @@ export default {
               description: data.data.description,
               file: null,
               image_url: data.data.image_url,
+              active: data.data.active,
+              stock: data.data.stock,
             });
           })
           .catch((e) => {

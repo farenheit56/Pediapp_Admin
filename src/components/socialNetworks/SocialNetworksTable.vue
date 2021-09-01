@@ -26,7 +26,7 @@
         </template>
         <template v-slot:body-cell-Icon="props">
           <q-td :props="props">
-            <q-img v-if="props.row.icon_url" :src="`http://localhost:3000/images/` + props.row.icon_url" height="auto" width="50px" :ratio="1"/>
+            <q-img v-if="props.row.icon_url" :src="`https://admin.pediapp.com.ar/images/` + props.row.icon_url" height="auto" width="50px" :ratio="1"/>
           </q-td>
         </template>
       </q-table>

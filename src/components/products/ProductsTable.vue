@@ -127,7 +127,7 @@
           <q-td :props="props">
             <q-img
               v-if="props.row.image_url"
-              :src="`http://localhost:3000/images/` + props.row.image_url"
+              :src="`https://admin.pediapp.com.ar/images/` + props.row.image_url"
               height="auto"
               width="100px"
               :ratio="1"

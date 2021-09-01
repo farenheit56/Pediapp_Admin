@@ -26,12 +26,12 @@
         </template>
         <template v-slot:body-cell-Slider-Image="props">
           <q-td :props="props">
-            <q-img v-if="props.row.slider_url" :src="`http://localhost:3000/images/` + props.row.slider_url" height="auto" width="100px" :ratio="1"/>
+            <q-img v-if="props.row.slider_url" :src="`https://admin.pediapp.com.ar/images/` + props.row.slider_url" height="auto" width="100px" :ratio="1"/>
           </q-td>
         </template>
         <template v-slot:body-cell-Support-Image="props">
           <q-td :props="props">
-            <q-img v-if="props.row.slider_url" :src="`http://localhost:3000/images/` + props.row.support_image_url" height="auto" width="100px" :ratio="1"/>
+            <q-img v-if="props.row.slider_url" :src="`https://admin.pediapp.com.ar/images/` + props.row.support_image_url" height="auto" width="100px" :ratio="1"/>
           </q-td>
         </template>
         <template v-slot:body-cell-Description="props">

@@ -62,7 +62,12 @@ const linksData = [
     link: '/products'
   },
   {
-    title: 'Secciones',
+    title: 'HOME',
+    icon: 'view_quilt',
+    link: '/home'
+  },
+  {
+    title: 'Secciones internas',
     icon: 'view_quilt',
     link: '/internalSections'
   },

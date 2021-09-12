@@ -219,14 +219,16 @@ export default {
         support_image: null,
         slider_url: '',    
         support_image_url: '', 
+        banner_image_1: null,
         banner_image_1_url: '',
+        banner_image_2: null,
         banner_image_2_url: '',      
       },
     }
   },
   computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Crear Sección' : 'Editar Sección'
+        return this.editedIndex === -1 ? 'Crear Home' : 'Editar Home'
       },
       isHomeCreated() {
         return this.home.length !== 0
@@ -260,12 +262,14 @@ export default {
       formData.set('description',this.editedItem.description)
       formData.append('slider_image',this.editedItem.slider_image)
       formData.append('support_image',this.editedItem.support_image)
+      formData.append('banner_1_image',this.editedItem.banner_image_1)
+      formData.append('banner_2_image',this.editedItem.banner_image_2)
 
       if (this.editedIndex > -1) {
         let localIndex = this.editedIndex
-        api.put(`internalSections/editSection/${this.sections[localIndex].id}`, formData)
+        api.put(`home/editHome/${this.home[localIndex].id}`, formData)
         .then(data => {
-          Object.assign(this.sections[localIndex], {
+          Object.assign(this.home[localIndex], {
             id: data.data.id,
             title: data.data.title,
             description: data.data.description, 
@@ -273,13 +277,17 @@ export default {
             support_image: null,
             slider_url: data.data.slider_url,  
             support_image_url: data.data.support_image_url,  
+            banner_image_1: null,
+            banner_image_1_url: data.data.banner_image_1_url,
+            banner_image_2: null,
+            banner_image_2_url: data.data.banner_image_2_url,
           })
         })
         .catch(e => {
           console.log(e);
         })
       } else {
-        api.post('internalSections/addSection', formData)
+        api.post('home/addHome', formData)
         .then(data => {
           this.sections.push({
             id: data.data.id,
@@ -288,7 +296,11 @@ export default {
             slider_image: null,
             support_image: null,
             slider_url: data.data.slider_url,  
-            support_image_url: data.data.support_image_url,  
+            support_image_url: data.data.support_image_url, 
+            banner_image_1: null,
+            banner_image_1_url: data.data.banner_image_1_url,
+            banner_image_2: null,
+            banner_image_2_url: data.data.banner_image_2_url, 
           })
         })
         .catch( e => {

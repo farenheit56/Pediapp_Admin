@@ -180,14 +180,14 @@
             </div>
           </div>
           <div class="row q-mt-md justify-center">
-            <div class="col-6 q-mx-sm">
+            <div class="col-2 q-mx-sm">
               <q-checkbox
               v-model="editedItem.active"
               label="Activo?"
               left-label           
               />              
             </div>
-            <div class="col-6 q-mx-sm">
+            <div class="col-2 q-mx-sm">
               <q-checkbox
               v-model="editedItem.stock"
               label="Tiene Stock?"
@@ -204,7 +204,7 @@
                 type="file"
                 bottom-slots
                 v-model="editedItem.file"
-                label="Foto"
+                label="Foto Principal"
                 counter
                 max-file-size="2097152"
                 max-files="1"
@@ -212,7 +212,7 @@
                 @rejected="onRejected"
               >
                 <template v-slot:before>
-                  <q-icon name="attachment" />
+                  <q-icon name="image" />
                 </template>
 
                 <template v-slot:append>
@@ -220,6 +220,60 @@
                     v-if="editedItem.image_url !== null"
                     name="close"
                     @click.stop="editedItem.image_url = null"
+                    class="cursor-pointer"
+                  />
+                  <q-icon name="search" @click.stop />
+                </template>
+
+                <template v-slot:hint> Tamaño máximo 2MB </template>
+              </q-file>
+            </div>
+          </div>
+          <div class="row q-mt-md justify-center">
+            Fotos adjuntas
+          </div>
+          <div class="row q-mt-md justify-center">
+            <div 
+              v-for="(image, index) in attachedProductImages"
+              :key="image.id"
+            >
+              <q-chip 
+              removable
+              @remove="attachedProductImages.splice(index, 1)">
+                <q-img
+                :src="`https://admin.pediapp.com.ar/images/` + image.image_url"
+                height="auto"
+                width="50px"
+                :ratio="1"
+                />
+              </q-chip>
+            </div>
+          </div>
+          <div class="row q-mt-md justify-center">
+            <div class="col-6 q-mx-sm">
+              <q-file
+                rounded
+                outlined
+                type="file"
+                bottom-slots
+                v-model="editedItem.additional_images"
+                label="Fotos adicionales"
+                counter
+                max-file-size="2097152"
+                max-files="6"
+                multiple
+                accept=".jpg, image/*"
+                @rejected="onRejected"
+              >
+                <template v-slot:before>
+                  <q-icon name="image" />
+                </template>
+
+                <template v-slot:append>
+                  <q-icon
+                    v-if="editedItem.additional_images !== null"
+                    name="close"
+                    @click.stop="editedItem.additional_images = null"
                     class="cursor-pointer"
                   />
                   <q-icon name="search" @click.stop />
@@ -332,6 +386,7 @@ export default {
       subcategories: [],
       selectedCategories: [],
       selectedSubcategories: [],
+      attachedProductImages: [],
       filter: '',
       activeCategoryFilter: false,
       subcategoryFilter: [],
@@ -408,6 +463,8 @@ export default {
         image_url: "",
         active: null,
         stock: null,
+        product_images: [],
+        additional_images: null,
       },
       defaultItem: {
         name: "",
@@ -417,6 +474,8 @@ export default {
         image_url: "",
         active: null,
         stock: null,
+        product_images: [],
+        additional_images: null,
       },
     };
   },
@@ -466,6 +525,9 @@ export default {
     editProduct(item) {
       this.editedIndex = this.products.indexOf(item);
       this.editedItem = Object.assign({}, item);
+      this.products[this.editedIndex].product_images.forEach(image => {
+        this.attachedProductImages.push(image)
+      })
       this.addProductDialog = true;
     },
     deleteProduct(item) {
@@ -493,6 +555,7 @@ export default {
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
+        this.attachedProductImages = []
       });
     },
     closeRelationDialog() {
@@ -503,6 +566,8 @@ export default {
       });
     },
     saveNewProduct() {
+      this.handleAttachedImages();
+
       let formData = new FormData();
       formData.set("name", this.editedItem.name);
       formData.set("price", this.editedItem.price);
@@ -525,6 +590,7 @@ export default {
               image_url: data.data.image_url,
               active: data.data.active,
               stock: data.data.stock,
+              additional_images: data.data.additional_images,
             });
           })
           .catch((e) => {
@@ -543,6 +609,7 @@ export default {
               image_url: data.data.image_url,
               active: data.data.active,
               stock: data.data.stock,
+              additional_images: data.data.additional_images,
             });
           })
           .catch((e) => {
@@ -550,6 +617,27 @@ export default {
           });
       }
       this.closeNewProductDialog();
+    },  
+    handleAttachedImages() {
+      let localIndex = this.editedIndex
+
+      this.products[localIndex].product_images.forEach(image => {
+        let found = this.attachedProductImages.some(el => {return el.id == image.id})
+        if(!found) {
+          api.post('products/separateImageFromProduct', {productId: this.products[localIndex].id, imageId: image.id })
+        }
+      })
+
+      if(this.editedItem.additional_images != undefined) {
+        this.editedItem.additional_images.forEach(image => {
+        let imageFormData = new FormData();
+        imageFormData.set("productId", this.products[localIndex].id)
+        imageFormData.append("additional_images", image)
+
+        api.post('products/relateImageToProduct', imageFormData)
+      })
+      }
+      
     },
     setSelectedCategories(category) {
       if(this.selectedCategories.find(element => element.id == category.id) === undefined) {

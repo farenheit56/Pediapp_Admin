@@ -5,12 +5,12 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', name: 'index', component: () => import('pages/Index.vue'), meta: {requireAuth: true} },
-      { path: '/categories', component: () => import('pages/Categories.vue'), meta: {requireAuth: true}  },
-      { path: '/products', component: () => import('pages/Products.vue'), meta: {requireAuth: true}  },
-      { path: '/home', component: () => import('pages/Home.vue'), meta: {requireAuth: true}  },
-      { path: '/internalSections', component: () => import('pages/InternalSections.vue'), meta: {requireAuth: true} },
-      { path: '/contact', component: () => import('src/pages/Contact.vue'), meta: {requireAuth: true}  },
-      { path: '/socialNetworks', component: () => import('pages/SocialNetworks.vue'), meta: {requireAuth: true}  }
+      { path: '/categorias', component: () => import('pages/Categories.vue'), meta: {requireAuth: true}  },
+      { path: '/productos', component: () => import('pages/Products.vue'), meta: {requireAuth: true}  },
+      { path: '/inicio', component: () => import('pages/Home.vue'), meta: {requireAuth: true}  },
+      { path: '/secciones-internas', component: () => import('pages/InternalSections.vue'), meta: {requireAuth: true} },
+      { path: '/contacto', component: () => import('src/pages/Contact.vue'), meta: {requireAuth: true}  },
+      { path: '/redes-sociales', component: () => import('pages/SocialNetworks.vue'), meta: {requireAuth: true}  }
     ]
   },
   {

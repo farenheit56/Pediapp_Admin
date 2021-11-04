@@ -52,34 +52,34 @@ import { mapActions, mapGetters } from "vuex";
 
 const linksData = [
   {
-    title: 'Categorías y Subcategorías',
-    icon: 'category',
-    link: '/categories'
-  },
-  {
-    title: 'Productos',
-    icon: 'production_quantity_limits',
-    link: '/products'
-  },
-  {
-    title: 'HOME',
+    title: 'Inicio',
     icon: 'view_quilt',
-    link: '/home'
+    link: '/inicio'
   },
   {
     title: 'Secciones internas',
     icon: 'view_quilt',
-    link: '/internalSections'
+    link: '/secciones-internas'
+  },
+  {
+    title: 'Categorías y Subcategorías',
+    icon: 'category',
+    link: '/categorias'
+  },
+  {
+    title: 'Productos',
+    icon: 'production_quantity_limits',
+    link: '/productos'
   },
   {
     title: 'Redes Sociales',
     icon: 'share',
-    link: '/socialNetworks'
+    link: '/redes-sociales'
   },
   {
     title: 'Datos de Contacto',
     icon: 'contact_page',
-    link: '/contact'
+    link: '/contacto'
   },
 ];
 

@@ -225,7 +225,7 @@
                   <q-icon name="search" @click.stop />
                 </template>
 
-                <template v-slot:hint> Tamaño máximo 2MB </template>
+                <template v-slot:hint> Tamaño máximo 2MB - 950 x 950 px. </template>
               </q-file>
             </div>
           </div>
@@ -279,7 +279,7 @@
                   <q-icon name="search" @click.stop />
                 </template>
 
-                <template v-slot:hint> Tamaño máximo 2MB </template>
+                <template v-slot:hint> Tamaño máximo 2MB - 950 x 950 px. </template>
               </q-file>
             </div>
           </div>

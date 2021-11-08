@@ -78,7 +78,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB
+                  Tamaño máximo 2MB - 950 x 950 px.
                 </template>
               </q-file>
             </div>
@@ -105,7 +105,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB
+                  Tamaño máximo 2MB - 950 x 950 px.
                 </template>
               </q-file>
             </div>
@@ -132,7 +132,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB
+                  Tamaño máximo 2MB - 950 x 950 px.
                 </template>
               </q-file>
             </div>
@@ -159,7 +159,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB
+                  Tamaño máximo 2MB - 950 x 950 px.
                 </template>
               </q-file>
             </div>

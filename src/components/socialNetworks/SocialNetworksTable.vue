@@ -66,7 +66,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB
+                  Tamaño máximo 2MB - 100 x 100 px.
                 </template>
               </q-file>
             </div>

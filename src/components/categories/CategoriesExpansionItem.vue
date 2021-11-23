@@ -132,7 +132,8 @@
       </q-card>
     </q-dialog>
   </q-card>
-      <div
+  <div class="row">
+    <div
       class="q-ma-md">
         <q-btn
           v-if="orderModified"
@@ -143,17 +144,18 @@
         Restaurar
         </q-btn>
     </div>
-      <div
-      class="q-ma-md">
-        <q-btn
-          v-if="orderModified"
-          color="positive"
-          class="text-capitalize"
-          @click="orderCategories()"
-        >
-        Confirmar orden
-        </q-btn>
+    <div
+    class="q-ma-md">
+      <q-btn
+        v-if="orderModified"
+        color="positive"
+        class="text-capitalize"
+        @click="orderCategories()"
+      >
+      Confirmar orden
+      </q-btn>
     </div>
+  </div>
 </div>
 </template>
 
@@ -270,19 +272,13 @@ export default {
       this.closeNewCategoryDialog();
     },
     saveNewSubcategory() {
+      let self = this
 
       if (this.editedIndex > -1) {
         api
           .put(`subcategories/editSubcategory/${this.editedIndex}`, this.editedItem)
           .then(() => {
-            api
-            .get("categories")
-            .then((response) => {
-              this.categories = response.data;
-            })
-            .catch((e) => {
-              console.log("error" + e);
-            });
+            self.getCategories()
           })
           .catch((e) => {
             console.log(e);
@@ -291,14 +287,7 @@ export default {
         api
           .post("subcategories/addSubcategory", this.editedItem)
           .then(() => {
-            api
-            .get("categories")
-            .then((response) => {
-              this.categories = response.data;
-            })
-            .catch((e) => {
-              console.log("error" + e);
-            });
+            self.getCategories()
           })
           .catch((e) => {
             console.log(e.response.data.message);
@@ -333,11 +322,20 @@ export default {
       }
     },
     orderCategories() {
+      let self = this;
+
       api
         .put(`categories/orderCategories`, this.categories)
         .then(() => {
-          this.orderModified = false
+          self.orderModified = false
+          this.$q.notify({
+          type: "positive",
+          message: `Orden modificado correctamente`,
+        });
         })
+        .catch((e) => {
+            console.log(e.response.data.message);
+          });
     }
   },
 };

@@ -1,48 +1,137 @@
 <template>
-  <q-card class="table-bg no-shadow">
-    <q-card-section>
-      <div class="text-h6">
-        HOME
-      </div>
-    </q-card-section>
-    <q-separator color="white"/>
-    <q-card-section class="q-pa-none">
-      <q-table class="table-bg" :data="home" :columns="columns" :filter="filter" :pagination="pagination" hide-bottom>
-        <template v-slot:top-right v-if="!isHomeCreated">
-          <q-btn color= positive class="float-right text-capitalize" icon="add" @click="homeDialog = true"/>
-        </template>
-        <template v-slot:body-cell-Action="props">
-          <q-td :props="props">
-            <q-btn icon="edit" size="sm" flat dense @click="editHome(props.row)"/>
-          </q-td>
-        </template>
-        <template v-slot:body-cell-Slider-Image="props">
-          <q-td :props="props">
-            <q-img v-if="props.row.slider_url" :src="`https://admin.pediapp.com.ar/images/` + props.row.slider_url" height="auto" width="100px" :ratio="1"/>
-          </q-td>
-        </template>
-        <template v-slot:body-cell-Support-Image="props">
-          <q-td :props="props">
-            <q-img v-if="props.row.support_image_url" :src="`https://admin.pediapp.com.ar/images/` + props.row.support_image_url" height="auto" width="100px" :ratio="1"/>
-          </q-td>
-        </template>
-        <template v-slot:body-cell-Banner-Image-1="props">
-          <q-td :props="props">
-            <q-img v-if="props.row.banner_image_1_url" :src="`https://admin.pediapp.com.ar/images/` + props.row.banner_image_1_url" height="auto" width="100px" :ratio="1"/>
-          </q-td>
-        </template>
-        <template v-slot:body-cell-Banner-Image-2="props">
-          <q-td :props="props">
-            <q-img v-if="props.row.banner_image_2_url" :src="`https://admin.pediapp.com.ar/images/` + props.row.banner_image_2_url" height="auto" width="100px" :ratio="1"/>
-          </q-td>
-        </template>
-        <template v-slot:body-cell-Description="props">
-          <q-td :props="props">
-            {{props.row.description.substr(0, 25) + '&hellip;'}}
-          </q-td>
-        </template>
-      </q-table>
-    </q-card-section>
+  <q-card class="no-shadow">
+    <div class="row justify-between">
+      <div class="col-1 text-h6">HOME</div>
+      <div class="col-1"><div><q-btn color="amber" glossy label="Editar" @click="editHome(home[0])"/></div></div>
+    </div>
+    <div class="row" style="padding:24px 0px 8px 16px">Titulo: &nbsp;{{home[0].title}}</div>
+    <div class="row" style="padding-left: 16px">Descripción: &nbsp;{{home[0].description}}</div>
+    <q-card flat  style="max-width: 550px">
+      <q-card-section horizontal>
+        <q-card-section class="q-pt-xs">
+          <div class="q-mt-sm q-mb-xs">Slider</div>
+        </q-card-section>
+
+        <q-card-section class="col-5 flex flex-center">
+          <q-img
+            class="rounded-borders"
+            :src="`http://api.pediapp.com.ar/images/` + home[0].slider_url"
+          />
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+    <q-card flat  style="max-width: 550px">
+      <q-card-section horizontal>
+        <q-card-section class="q-pt-xs">
+          <div class="q-mt-sm q-mb-xs">Imagen Soporte de Texto</div>
+        </q-card-section>
+
+        <q-card-section class="col-5 flex flex-center">
+          <q-img
+            class="rounded-borders"
+            :src="`http://api.pediapp.com.ar/images/` + home[0].support_image_url"
+          />
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+    <q-card flat  style="max-width: 550px">
+      <q-card-section horizontal>
+        <q-card-section class="q-pt-xs">
+          <div class="q-mt-sm q-mb-xs">Banner Principal 1</div>
+        </q-card-section>
+
+        <q-card-section class="col-5 flex flex-center">
+          <q-img
+            class="rounded-borders"
+            :src="`http://api.pediapp.com.ar/images/` + home[0].banner_image_1_url"
+          />
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+    <q-card flat  style="max-width: 550px">
+      <q-card-section horizontal>
+        <q-card-section class="q-pt-xs">
+          <div class="q-mt-sm q-mb-xs">Banner Principal 2</div>
+        </q-card-section>
+
+        <q-card-section class="col-5 flex flex-center">
+          <q-img
+            class="rounded-borders"
+            :src="`http://api.pediapp.com.ar/images/` + home[0].banner_image_2_url"
+          />
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+    <q-card flat  style="max-width: 550px">
+      <q-card-section horizontal>
+        <q-card-section class="q-pt-xs">
+          <div class="q-mt-sm q-mb-xs">Banner Destacado 1</div>
+        </q-card-section>
+
+        <q-card-section class="col-5 flex flex-center">
+          <q-img
+            class="rounded-borders"
+            :src="`http://api.pediapp.com.ar/images/` + home[0].body_banner_image_1_url"
+          />
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+    <q-card flat  style="max-width: 550px">
+      <q-card-section horizontal>
+        <q-card-section class="q-pt-xs">
+          <div class="q-mt-sm q-mb-xs">Banner Destacado 2</div>
+        </q-card-section>
+
+        <q-card-section class="col-5 flex flex-center">
+          <q-img
+            class="rounded-borders"
+            :src="`http://api.pediapp.com.ar/images/` + home[0].body_banner_image_2_url"
+          />
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+    <q-card flat  style="max-width: 550px">
+      <q-card-section horizontal>
+        <q-card-section class="q-pt-xs">
+          <div class="q-mt-sm q-mb-xs">Información Extra 1</div>
+        </q-card-section>
+
+        <q-card-section class="col-5 flex flex-center">
+          <q-img
+            class="rounded-borders"
+            :src="`http://api.pediapp.com.ar/images/` + home[0].extra_info_image_1_url"
+          />
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+    <q-card flat  style="max-width: 550px">
+      <q-card-section horizontal>
+        <q-card-section class="q-pt-xs">
+          <div class="q-mt-sm q-mb-xs">Información Extra 2</div>
+        </q-card-section>
+
+        <q-card-section class="col-5 flex flex-center">
+          <q-img
+            class="rounded-borders"
+            :src="`http://api.pediapp.com.ar/images/` + home[0].extra_info_image_2_url"
+          />
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+    <q-card flat  style="max-width: 550px">
+      <q-card-section horizontal>
+        <q-card-section class="q-pt-xs">
+          <div class="q-mt-sm q-mb-xs">Información Extra 3</div>
+        </q-card-section>
+
+        <q-card-section class="col-5 flex flex-center">
+          <q-img
+            class="rounded-borders"
+            :src="`http://api.pediapp.com.ar/images/` + home[0].extra_info_image_3_url"
+          />
+        </q-card-section>
+      </q-card-section>
+    </q-card>
     <q-dialog v-model="homeDialog">
       <q-card style="min-width: 750px">
         <q-card-section>
@@ -116,7 +205,7 @@
               rounded outlined type="file" 
               bottom-slots
               v-model="editedItem.banner_image_1"
-              label="Imagen Banner 1"
+              label="Banner 1"
               counter
               max-file-size="2097152"
               max-files="1"
@@ -143,7 +232,7 @@
               rounded outlined type="file" 
               bottom-slots
               v-model="editedItem.banner_image_2"
-              label="Imagen Banner 2"
+              label="Banner 2"
               counter
               max-file-size="2097152"
               max-files="1"
@@ -155,6 +244,141 @@
 
                 <template v-slot:append>
                   <q-icon v-if="editedItem.banner_image_2_url !== null" name="close" @click.stop="editedItem.banner_image_2_url = null" class="cursor-pointer" />
+                  <q-icon name="search" @click.stop />
+                </template>
+
+                <template v-slot:hint>
+                  Tamaño máximo 2MB - 950 x 950 px.
+                </template>
+              </q-file>
+            </div>
+          </div>
+          <div class="row q-mt-md justify-center">
+            <div class="col-6 q-mx-sm">
+              <q-file 
+              rounded outlined type="file" 
+              bottom-slots
+              v-model="editedItem.body_banner_image_1"
+              label="Banner Destacado 1"
+              counter
+              max-file-size="2097152"
+              max-files="1"
+              accept=".jpg, image/*"
+              @rejected="onRejected">
+                <template v-slot:before>
+                  <q-icon name="attachment" />
+                </template>
+
+                <template v-slot:append>
+                  <q-icon v-if="editedItem.body_banner_image_1_url !== null" name="close" @click.stop="editedItem.body_banner_image_1_url = null" class="cursor-pointer" />
+                  <q-icon name="search" @click.stop />
+                </template>
+
+                <template v-slot:hint>
+                  Tamaño máximo 2MB - 950 x 950 px.
+                </template>
+              </q-file>
+            </div>
+          </div>
+          <div class="row q-mt-md justify-center">
+            <div class="col-6 q-mx-sm">
+              <q-file 
+              rounded outlined type="file" 
+              bottom-slots
+              v-model="editedItem.body_banner_image_2"
+              label="Banner Destacado 2"
+              counter
+              max-file-size="2097152"
+              max-files="1"
+              accept=".jpg, image/*"
+              @rejected="onRejected">
+                <template v-slot:before>
+                  <q-icon name="attachment" />
+                </template>
+
+                <template v-slot:append>
+                  <q-icon v-if="editedItem.body_banner_image_2_url !== null" name="close" @click.stop="editedItem.body_banner_image_2_url = null" class="cursor-pointer" />
+                  <q-icon name="search" @click.stop />
+                </template>
+
+                <template v-slot:hint>
+                  Tamaño máximo 2MB - 950 x 950 px.
+                </template>
+              </q-file>
+            </div>
+          </div>
+          <div class="row q-mt-md justify-center">
+            <div class="col-6 q-mx-sm">
+              <q-file 
+              rounded outlined type="file" 
+              bottom-slots
+              v-model="editedItem.extra_info_image_1"
+              label="Información Extra 1"
+              counter
+              max-file-size="2097152"
+              max-files="1"
+              accept=".jpg, image/*"
+              @rejected="onRejected">
+                <template v-slot:before>
+                  <q-icon name="attachment" />
+                </template>
+
+                <template v-slot:append>
+                  <q-icon v-if="editedItem.extra_info_image_1_url !== null" name="close" @click.stop="editedItem.extra_info_image_1_url = null" class="cursor-pointer" />
+                  <q-icon name="search" @click.stop />
+                </template>
+
+                <template v-slot:hint>
+                  Tamaño máximo 2MB - 950 x 950 px.
+                </template>
+              </q-file>
+            </div>
+          </div>
+          <div class="row q-mt-md justify-center">
+            <div class="col-6 q-mx-sm">
+              <q-file 
+              rounded outlined type="file" 
+              bottom-slots
+              v-model="editedItem.extra_info_image_2"
+              label="Información Extra 2"
+              counter
+              max-file-size="2097152"
+              max-files="1"
+              accept=".jpg, image/*"
+              @rejected="onRejected">
+                <template v-slot:before>
+                  <q-icon name="attachment" />
+                </template>
+
+                <template v-slot:append>
+                  <q-icon v-if="editedItem.extra_info_image_2_url !== null" name="close" @click.stop="editedItem.extra_info_image_2_url = null" class="cursor-pointer" />
+                  <q-icon name="search" @click.stop />
+                </template>
+
+                <template v-slot:hint>
+                  Tamaño máximo 2MB - 950 x 950 px.
+                </template>
+              </q-file>
+            </div>
+          </div>
+          <div class="row q-mt-md justify-center">
+            <div class="col-6 q-mx-sm">
+              <q-file 
+              rounded outlined type="file" 
+              bottom-slots
+              v-model="editedItem.extra_info_image_3"
+              label="Información Extra 3"
+              counter
+              max-file-size="2097152"
+              max-files="1"
+              accept=".jpg, image/*"
+              @rejected="onRejected">
+                <template v-slot:before>
+                  <q-icon name="attachment" />
+                </template>
+
+                <template v-slot:append>
+                  <q-icon v-if="editedItem.extra_info_image_3_url !== null" name="close" @click.stop="editedItem.extra_info_image_3_url = null" class="cursor-pointer" />
                   <q-icon name="search" @click.stop />
                 </template>
 
@@ -192,9 +416,14 @@ export default {
         {name: 'Title', label: 'Titulo', field: 'title', sortable: true, align: 'left'},
         {name: 'Slider-Image', label: 'Slider', field: 'slider_url', sortable: true, align: 'left'},
         {name: 'Description', label: 'Descripción', field: 'description', sortable: true, align: 'left'},
-        {name: 'Support-Image', label: 'Imagen soporte', field: 'support_image_url', sortable: true, align: 'left'},
-        {name: 'Banner-Image-1', label: 'Imagen banner 1', field: 'banner_image_1_url', sortable: true, align: 'left'},
-        {name: 'Banner-Image-2', label: 'Imagen banner 2', field: 'banner_image_2_url', sortable: true, align: 'left'},
+        {name: 'Support-Image', label: 'Imagen Soporte Texto', field: 'support_image_url', sortable: true, align: 'left'},
+        {name: 'Banner-Image-1', label: 'Banner 1', field: 'banner_image_1_url', sortable: true, align: 'left'},
+        {name: 'Banner-Image-2', label: 'Banner 2', field: 'banner_image_2_url', sortable: true, align: 'left'},
+        {name: 'Body-Banner-Image-1', label: 'Banner Destacado 1', field: 'body_banner_image_1_url', sortable: true, align: 'left'},
+        {name: 'Body-Banner-Image-2', label: 'Banner Destacado 2', field: 'body_banner_image_2_url', sortable: true, align: 'left'},
+        {name: 'Extra-Info-Image-1', label: 'Información Extra 1', field: 'extra_info_image_1_url', sortable: true, align: 'left'},
+        {name: 'Extra-Info-Image-2', label: 'Información Extra 2', field: 'extra_info_image_2_url', sortable: true, align: 'left'},
+        {name: 'Extra-Info-Image-3', label: 'Información Extra 3', field: 'extra_info_image_3_url', sortable: true, align: 'left'},
         {name: 'Action', label: '', field: 'Action', sortable: false, align: 'center'}
       ],
       pagination: {
@@ -208,9 +437,21 @@ export default {
         description: '', 
         support_image: null,
         slider_url: '',    
-        support_image_url: '',
+        support_image_url: '', 
+        banner_image_1: null,
         banner_image_1_url: '',
-        banner_image_2_url: '',   
+        banner_image_2: null,
+        banner_image_2_url: '',
+        body_banner_image_1: null,
+        body_banner_image_1_url: '',
+        body_banner_image_2: null,
+        body_banner_image_2_url: '',
+        extra_info_image_1: null,
+        extra_info_image_1_url: '',
+        extra_info_image_2: null,
+        extra_info_image_2_url: '',
+        extra_info_image_3: null,
+        extra_info_image_3_url: '',   
       },
       defaultItem: {
         title: '',
@@ -222,7 +463,17 @@ export default {
         banner_image_1: null,
         banner_image_1_url: '',
         banner_image_2: null,
-        banner_image_2_url: '',      
+        banner_image_2_url: '',
+        body_banner_image_1: null,
+        body_banner_image_1_url: '',
+        body_banner_image_2: null,
+        body_banner_image_2_url: '',
+        extra_info_image_1: null,
+        extra_info_image_1_url: '',
+        extra_info_image_2: null,
+        extra_info_image_2_url: '',
+        extra_info_image_3: null,
+        extra_info_image_3_url: '',         
       },
     }
   },
@@ -264,6 +515,11 @@ export default {
       formData.append('support_image',this.editedItem.support_image)
       formData.append('banner_1_image',this.editedItem.banner_image_1)
       formData.append('banner_2_image',this.editedItem.banner_image_2)
+      formData.append('body_banner_image_1',this.editedItem.body_banner_image_1)
+      formData.append('body_banner_image_2',this.editedItem.body_banner_image_2)
+      formData.append('extra_info_image_1',this.editedItem.extra_info_image_1)
+      formData.append('extra_info_image_2',this.editedItem.extra_info_image_2)
+      formData.append('extra_info_image_3',this.editedItem.extra_info_image_3)
 
       if (this.editedIndex > -1) {
         let localIndex = this.editedIndex
@@ -281,6 +537,16 @@ export default {
             banner_image_1_url: data.data.banner_image_1_url,
             banner_image_2: null,
             banner_image_2_url: data.data.banner_image_2_url,
+            body_banner_image_1: null,
+            body_banner_image_1_url: data.data.body_banner_image_1_url,
+            body_banner_image_2: null,
+            body_banner_image_2_url: data.data.body_banner_image_2_url,
+            extra_info_image_1: null,
+            extra_info_image_1_url: data.data.extra_info_image_1_url,
+            extra_info_image_2: null,
+            extra_info_image_2_url: data.data.extra_info_image_2_url,
+            extra_info_image_3: null,
+            extra_info_image_3_url: data.data.extra_info_image_3_url, 
           })
         })
         .catch(e => {
@@ -300,7 +566,17 @@ export default {
             banner_image_1: null,
             banner_image_1_url: data.data.banner_image_1_url,
             banner_image_2: null,
-            banner_image_2_url: data.data.banner_image_2_url, 
+            banner_image_2_url: data.data.banner_image_2_url,
+            body_banner_image_1: null,
+            body_banner_image_1_url: data.data.body_banner_image_1_url,
+            body_banner_image_2: null,
+            body_banner_image_2_url: data.data.body_banner_image_2_url,
+            extra_info_image_1: null,
+            extra_info_image_1_url: data.data.extra_info_image_1_url,
+            extra_info_image_2: null,
+            extra_info_image_2_url: data.data.extra_info_image_2_url,
+            extra_info_image_3: null,
+            extra_info_image_3_url: data.data.extra_info_image_3_url,  
           })
         })
         .catch( e => {

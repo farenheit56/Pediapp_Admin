@@ -90,6 +90,11 @@
             @click="addProductDialog = true"
           />
         </template>
+
+        <template v-slot:body-cell-Price="props">
+          <td class="text-left">${{props.row.price.toFixed(2)}}</td>
+        </template>
+
         <template v-slot:body-cell-Action="props">
           <q-td :props="props" >
             <q-btn
@@ -124,13 +129,11 @@
           </q-td>
         </template>
         <template v-slot:body-cell-Image="props">
-          <q-td :props="props">
+          <q-td :props="props" style="height: 100px; width: 100px">
             <q-img
               v-if="props.row.image_url"
-              :src="`https://admin.pediapp.com.ar/images/` + props.row.image_url"
-              height="auto"
-              width="100px"
-              :ratio="1"
+              :src="`http://api.pediapp.com.ar/images/` + props.row.image_url"
+              fit="fill"
             />
           </q-td>
         </template>
@@ -241,7 +244,7 @@
               removable
               @remove="attachedProductImages.splice(index, 1)">
                 <q-img
-                :src="`https://admin.pediapp.com.ar/images/` + image.image_url"
+                :src="`http://api.pediapp.com.ar/images/` + image.image_url"
                 height="auto"
                 width="50px"
                 :ratio="1"
@@ -461,8 +464,8 @@ export default {
         description: "",
         file: null,
         image_url: "",
-        active: null,
-        stock: null,
+        active: true,
+        stock: true,
         product_images: [],
         additional_images: null,
       },
@@ -472,8 +475,8 @@ export default {
         description: "",
         file: null,
         image_url: "",
-        active: null,
-        stock: null,
+        active: true,
+        stock: true,
         product_images: [],
         additional_images: null,
       },
@@ -525,9 +528,13 @@ export default {
     editProduct(item) {
       this.editedIndex = this.products.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      this.products[this.editedIndex].product_images.forEach(image => {
-        this.attachedProductImages.push(image)
-      })
+
+      if(this.products[this.editedIndex].product_images) {
+        this.products[this.editedIndex].product_images.forEach(image => {
+          this.attachedProductImages.push(image)
+        })
+      }
+      
       this.addProductDialog = true;
     },
     deleteProduct(item) {
@@ -566,7 +573,6 @@ export default {
       });
     },
     saveNewProduct() {
-      this.handleAttachedImages();
 
       let formData = new FormData();
       formData.set("name", this.editedItem.name);
@@ -577,6 +583,7 @@ export default {
       formData.append("file", this.editedItem.file);
 
       if (this.editedIndex > -1) {
+        this.handleAttachedImagesForExistingProduct()
         let localIndex = this.editedIndex;
         api
           .put(`products/editProduct/${this.products[localIndex].id}`, formData)
@@ -597,6 +604,7 @@ export default {
             console.log(e);
           });
       } else {
+        let self = this;
         api
           .post("products/addProduct", formData)
           .then((data) => {
@@ -611,14 +619,15 @@ export default {
               stock: data.data.stock,
               additional_images: data.data.additional_images,
             });
+            self.handleAttachedImagesForNewProduct(data.data.id)
+            self.closeNewProductDialog()
           })
           .catch((e) => {
             console.log(e.response.data.errors.message);
           });
       }
-      this.closeNewProductDialog();
     },  
-    handleAttachedImages() {
+    handleAttachedImagesForExistingProduct() {
       let localIndex = this.editedIndex
 
       this.products[localIndex].product_images.forEach(image => {
@@ -631,10 +640,34 @@ export default {
       if(this.editedItem.additional_images != undefined) {
         this.editedItem.additional_images.forEach(image => {
         let imageFormData = new FormData();
+        console.log(typeof this.products[localIndex].id)
         imageFormData.set("productId", this.products[localIndex].id)
         imageFormData.append("additional_images", image)
 
+        let self = this
+
         api.post('products/relateImageToProduct', imageFormData)
+        .then(() => {
+          self.getProducts()
+        })
+      })
+      }
+      
+    },
+    handleAttachedImagesForNewProduct(newProductId) {
+
+      if(this.editedItem.additional_images != undefined) {
+        this.editedItem.additional_images.forEach(image => {
+        let imageFormData = new FormData();
+        imageFormData.set("productId", newProductId)
+        imageFormData.append("additional_images", image)
+
+        let self = this
+
+        api.post('products/relateImageToProduct', imageFormData)
+        .then(() => {
+          self.getProducts()
+        })
       })
       }
       

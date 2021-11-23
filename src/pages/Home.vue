@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-sm">
     <div class="row justify-evenly">
-      <home-table class="q-ma-sm"></home-table>
+      <home-table class="col-4 q-ma-sm"></home-table>
     </div>
   </q-page>
 </template>

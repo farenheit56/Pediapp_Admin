@@ -31,6 +31,7 @@
           </div>
           <div class="row q-mt-md">
             <div class="col q-mx-sm"><q-input dense v-model="editedItem.address" label="Dirección"/></div>
+            <div class="col q-mx-sm"><q-input dense v-model="editedItem.email" label="Email"/></div>
           </div>
         </q-card-section>
 
@@ -56,9 +57,10 @@ export default {
       contact: [],
       filter: '',
       columns: [
-        {name: 'Name', label: 'Nombre', field: 'name', sortable: true, align: 'left'},
+        {name: 'Name', label: 'Nombre del Comercio', field: 'name', sortable: true, align: 'left'},
         {name: 'Phone', label: 'Teléfono', field: 'phone', sortable: true, align: 'left'},
         {name: 'Address', label: 'Dirección', field: 'address', sortable: true, align: 'left'},
+        {name: 'Email', label: 'Email', field: 'email', sortable: true, align: 'left'},
         {name: 'Action', label: '', field: 'Action', sortable: false, align: 'center'}
       ],
       pagination: {
@@ -70,11 +72,13 @@ export default {
         name: '',
         phone: '',
         address: '', 
+        email: '',
       },
       defaultItem: {
         name: '',
         phone: '',
-        address: '',    
+        address: '',  
+        email: '',
       },
     }
   },
@@ -128,7 +132,8 @@ export default {
             id: data.data.id,
             name: data.data.name,
             phone: data.data.phone,
-            address: data.data.address, 
+            address: data.data.address,
+            email: data.data.email, 
           })
         })
         .catch(e => {
@@ -142,6 +147,7 @@ export default {
             name: data.data.name,
             phone: data.data.phone,
             address: data.data.address,  
+            email: data.data.email,
           })
         })
         .catch( e => {

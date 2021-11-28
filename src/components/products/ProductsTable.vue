@@ -263,7 +263,7 @@
                 label="Fotos adicionales"
                 counter
                 max-file-size="2097152"
-                max-files="6"
+                max-files="5"
                 multiple
                 accept=".jpg, image/*"
                 @rejected="onRejected"

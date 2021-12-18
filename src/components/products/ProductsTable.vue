@@ -573,6 +573,7 @@ export default {
       });
     },
     saveNewProduct() {
+      let self = this;
 
       let formData = new FormData();
       formData.set("name", this.editedItem.name);
@@ -599,12 +600,13 @@ export default {
               stock: data.data.stock,
               additional_images: data.data.additional_images,
             });
+            self.closeNewProductDialog()
           })
           .catch((e) => {
             console.log(e);
           });
       } else {
-        let self = this;
+        
         api
           .post("products/addProduct", formData)
           .then((data) => {
@@ -629,11 +631,15 @@ export default {
     },  
     handleAttachedImagesForExistingProduct() {
       let localIndex = this.editedIndex
+      let self = this
 
       this.products[localIndex].product_images.forEach(image => {
         let found = this.attachedProductImages.some(el => {return el.id == image.id})
         if(!found) {
           api.post('products/separateImageFromProduct', {productId: this.products[localIndex].id, imageId: image.id })
+          .then(() => {
+            self.getProducts()
+          })
         }
       })
 
@@ -644,7 +650,7 @@ export default {
         imageFormData.set("productId", this.products[localIndex].id)
         imageFormData.append("additional_images", image)
 
-        let self = this
+        
 
         api.post('products/relateImageToProduct', imageFormData)
         .then(() => {

@@ -224,18 +224,13 @@ export default {
         });
     },
     deleteSubcategory(item) {
+      let self = this
 
       confirm("Estás seguro que querés eliminar esta subcategoría?") &&
         api.delete(`subcategories/deleteSubcategory/${item.id}`)
         .then(() => {
-            api
-            .get("categories")
-            .then((response) => {
-              this.categories = response.data;
-            })
-            .catch((e) => {
-              console.log("error" + e);
-            });
+          console.log('subcat borrada')
+            self.getCategories()
           })
         .catch((e) => {
           console.log(e.response.data.message);

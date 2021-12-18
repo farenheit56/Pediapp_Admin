@@ -23,20 +23,6 @@
     <q-card flat  style="max-width: 550px">
       <q-card-section horizontal>
         <q-card-section class="q-pt-xs">
-          <div class="q-mt-sm q-mb-xs">Imagen Soporte de Texto</div>
-        </q-card-section>
-
-        <q-card-section class="col-5 flex flex-center">
-          <q-img
-            class="rounded-borders"
-            :src="`http://api.pediapp.com.ar/images/` + home[0].support_image_url"
-          />
-        </q-card-section>
-      </q-card-section>
-    </q-card>
-    <q-card flat  style="max-width: 550px">
-      <q-card-section horizontal>
-        <q-card-section class="q-pt-xs">
           <div class="q-mt-sm q-mb-xs">Banner Principal 1</div>
         </q-card-section>
 
@@ -167,34 +153,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB - 950 x 950 px.
-                </template>
-              </q-file>
-            </div>
-          </div>
-          <div class="row q-mt-md justify-center">
-            <div class="col-6 q-mx-sm">
-              <q-file 
-              rounded outlined type="file" 
-              bottom-slots
-              v-model="editedItem.support_image"
-              label="Imagen soporte"
-              counter
-              max-file-size="2097152"
-              max-files="1"
-              accept=".jpg, image/*"
-              @rejected="onRejected">
-                <template v-slot:before>
-                  <q-icon name="attachment" />
-                </template>
-
-                <template v-slot:append>
-                  <q-icon v-if="editedItem.support_image_url !== null" name="close" @click.stop="editedItem.support_image_url = null" class="cursor-pointer" />
-                  <q-icon name="search" @click.stop />
-                </template>
-
-                <template v-slot:hint>
-                  Tamaño máximo 2MB - 950 x 950 px.
+                  Tamaño máximo 2MB - 1600 x 1200 px.
                 </template>
               </q-file>
             </div>
@@ -221,7 +180,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB - 950 x 950 px.
+                  Tamaño máximo 2MB - 1600 x 1200 px.
                 </template>
               </q-file>
             </div>
@@ -248,7 +207,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB - 950 x 950 px.
+                  Tamaño máximo 2MB - 1600 x 1200 px.
                 </template>
               </q-file>
             </div>
@@ -275,7 +234,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB - 950 x 950 px.
+                  Tamaño máximo 2MB - 1600 x 900 px.
                 </template>
               </q-file>
             </div>
@@ -302,7 +261,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB - 950 x 950 px.
+                  Tamaño máximo 2MB - 1600 x 900 px.
                 </template>
               </q-file>
             </div>
@@ -329,7 +288,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB - 950 x 950 px.
+                  Tamaño máximo 2MB - 1600 x 1200 px.
                 </template>
               </q-file>
             </div>
@@ -356,7 +315,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB - 950 x 950 px.
+                  Tamaño máximo 2MB - 1600 x 1200 px.
                 </template>
               </q-file>
             </div>
@@ -383,7 +342,7 @@
                 </template>
 
                 <template v-slot:hint>
-                  Tamaño máximo 2MB - 950 x 950 px.
+                  Tamaño máximo 2MB - 1600 x 1200 px.
                 </template>
               </q-file>
             </div>

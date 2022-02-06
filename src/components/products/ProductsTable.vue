@@ -1,4 +1,5 @@
 <template>
+<div>
 <div class="row">
   <div class="col-3">
   <q-card class="table-bg no-shadow">
@@ -369,7 +370,52 @@
     </q-dialog>
   </q-card>
   </div>
+</div>
+<div class="row q-mt-lg">
+  <div class="col-10">
+  <q-card flat  >
+      <q-card-section>
+        <q-card-section>
+      <div class="text-h6">Slider</div>
+    </q-card-section>
+
+        <q-card-section class="flex flex-center">
+          <q-img
+            class="rounded-borders"
+            :src="`http://api.pediapp.com.ar/images/`+ productSection[0].slider_url"
+          />
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+    </div>
+    <div class="column justify-center">
+    <div class="col-5">
+              <q-file
+                rounded
+                outlined
+                type="file"
+                bottom-slots
+                v-model="productSlider"
+                max-file-size="2097152"
+                max-files="1"
+                accept=".jpg, image/*"
+                @rejected="onRejected"
+              >
+                <template v-slot:before>
+                  <q-icon name="image" />
+                </template>
+
+                <template v-slot:append>
+                  <q-icon name="search" @click.stop />
+                </template>
+
+                <template v-slot:hint> Tamaño máximo 2MB - 1600 x 1200 px. </template>
+              </q-file>
+              <q-btn class="q-my-xl" label="Cambiar Slider" @click="editProductSlider"></q-btn>
+            </div>
+    </div>
 </div>  
+</div>
 </template>
 
 <script>
@@ -381,6 +427,7 @@ export default {
     this.getProducts();
     this.getCategories();
     this.getSubcategories();
+    this.getProductSlider();
   },
   data() {
     return {
@@ -480,6 +527,8 @@ export default {
         product_images: [],
         additional_images: null,
       },
+      productSection: [],
+      productSlider: undefined,
     };
   },
   computed: {
@@ -524,6 +573,16 @@ export default {
         .catch((e) => {
           console.log("error" + e);
         });
+    },
+    getProductSlider() {
+      api
+        .get('internalSections')
+        .then((response) => {
+          this.productSection = response.data.slice(1,2)
+        })
+        .catch((e)=>{
+          console.log('error' + e);
+        })
     },
     editProduct(item) {
       this.editedIndex = this.products.indexOf(item);
@@ -661,20 +720,21 @@ export default {
       
     },
     handleAttachedImagesForNewProduct(newProductId) {
+      let self = this
 
       if(this.editedItem.additional_images != undefined) {
         this.editedItem.additional_images.forEach(image => {
         let imageFormData = new FormData();
         imageFormData.set("productId", newProductId)
-        imageFormData.append("additional_images", image)
-
-        let self = this
+        imageFormData.append("additional_images", image)        
 
         api.post('products/relateImageToProduct', imageFormData)
         .then(() => {
           self.getProducts()
         })
       })
+      } else {
+        self.getProducts()
       }
       
     },
@@ -793,10 +853,31 @@ export default {
         console.log("error" + e);
       });
     },
+    editProductSlider() {
+      let self = this
+
+      if(this.productSlider != undefined) {
+        let imageFormData = new FormData();
+        imageFormData.append("product_slider_image", this.productSlider)        
+
+        api.put('internalSections/editProductSlider', imageFormData)
+        .then(() => {
+          self.getProductSlider()
+        })
+      } else {
+        self.onNofileRejection()
+      }
+    },
     onRejected() {
       this.$q.notify({
         type: "negative",
         message: `Archivo no permitido`,
+      });
+    },
+    onNofileRejection() {
+      this.$q.notify({
+        type: "negative",
+        message: `Se debe seleccionar una imagen`,
       });
     },
   },

@@ -229,7 +229,6 @@ export default {
       confirm("Estás seguro que querés eliminar esta subcategoría?") &&
         api.delete(`subcategories/deleteSubcategory/${item.id}`)
         .then(() => {
-          console.log('subcat borrada')
             self.getCategories()
           })
         .catch((e) => {

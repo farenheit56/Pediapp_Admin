@@ -171,7 +171,7 @@ export default {
     getSections() {
       api.get('internalSections')
       .then((response) => {
-        this.sections = response.data
+        this.sections = response.data.slice(2)
       })
       .catch((e)=>{
         console.log('error' + e);

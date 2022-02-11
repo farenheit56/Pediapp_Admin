@@ -41,11 +41,11 @@
             </q-item-section>
 
             <q-item-section side>
-              <q-icon color="primary" size="xs" class="pointer" name="delete" @click="deleteSubcategory(subcategory)" />
+              <q-icon color="primary" size="xs" class="pointer" name="delete" @click="deleteSubcategory(category, subcategory)" />
             </q-item-section>
           </q-item>
 
-          <q-item clickable @click="addSubcategoryDialog = true; editedItem.categoryId = category.id">
+          <q-item clickable @click="addSubcategoryDialog = true; editedItem.categoryId = category.id; editedCat = category">
 
             <q-item-section avatar class="q-pl-md">
               <q-icon  name="add" color="green" />
@@ -171,6 +171,8 @@ export default {
       orderModified: false,
       addCategoryDialog: false,
       addSubcategoryDialog: false,
+      editedCat: undefined,
+      editedSubcat: undefined,
       editedIndex: -1,
       editedItem: {
         name: "",
@@ -205,11 +207,14 @@ export default {
         });
     },
     editCategory(item) {
+      this.editedCat = item
       this.editedIndex = this.categories.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.addCategoryDialog = true;
     },
     editSubcategory(category, subcategory) {
+      this.editedCat = category
+      this.editedSubcat = subcategory
       this.editedIndex = subcategory.id
       this.editedItem = Object.assign({}, subcategory);
       this.addSubcategoryDialog = true;
@@ -223,11 +228,11 @@ export default {
           console.log(e.response.data.message);
         });
     },
-    deleteSubcategory(item) {
+    deleteSubcategory(category, subcategory) {
       let self = this
 
       confirm("Estás seguro que querés eliminar esta subcategoría?") &&
-        api.delete(`subcategories/deleteSubcategory/${item.id}`)
+        api.delete(`subcategories/deleteSubcategory/${subcategory.id}`)
         .then(() => {
             self.getCategories()
           })
@@ -267,12 +272,16 @@ export default {
     },
     saveNewSubcategory() {
       let self = this
-
       if (this.editedIndex > -1) {
         api
           .put(`subcategories/editSubcategory/${this.editedIndex}`, this.editedItem)
-          .then(() => {
-            self.getCategories()
+          .then(data => {
+            let catIndex = self.categories.map(function(e) { return e.id; }).indexOf(self.editedCat.id)
+            let subcatIndex = self.categories[catIndex].subcategories.map(function(e) { return e.id; }).indexOf(self.editedSubcat.id);
+            Object.assign(self.categories[catIndex].subcategories[subcatIndex], {
+              id: data.data.id,
+              name: data.data.name,
+            });
           })
           .catch((e) => {
             console.log(e);
@@ -280,8 +289,12 @@ export default {
       } else {
         api
           .post("subcategories/addSubcategory", this.editedItem)
-          .then(() => {
-            self.getCategories()
+          .then(data => {
+            let catIndex = self.categories.map(function(e) { return e.id; }).indexOf(self.editedCat.id)
+            this.categories[catIndex].subcategories.push({
+              id: data.data.id,
+              name: data.data.name,
+            });
           })
           .catch((e) => {
             console.log(e.response.data.message);
